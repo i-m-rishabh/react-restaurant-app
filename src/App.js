@@ -1,24 +1,44 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
+import Form from './components/Form.js';
+import List from './components/List.js';
 
 function App() {
+  const [orders, setOrders] = useState(localStorage.getItem('orders') ? [...(JSON.parse(localStorage.getItem('orders')))] : []);
+
+  useEffect(()=>{
+    localStorage.setItem('orders', JSON.stringify(orders));
+  },[orders]);
+
+  function handleAddOrer(id,price,dish,table){
+    setOrders((orders)=>{
+      return [
+        ...orders,
+        {
+          id: id,
+          price: price,
+          dish: dish,
+          table: table
+        }
+      ]
+    })
+  }
+  function handleDelete(id){
+    setOrders((orders)=>{
+      return(
+        orders.filter((order)=>{
+        return order.id!==id;
+      })
+      )
+      
+    })
+  }
+  console.log(orders);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Form onAddOrder={handleAddOrer}/>
+      <List orders={orders} onDelete={handleDelete}/>
+    </>
   );
 }
 
